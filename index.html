@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nightfall Interface</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+    margin:0;
+    padding:0;
+    background: radial-gradient(circle at center,#050505,#000000 70%);
+    font-family:'Orbitron', monospace;
+    color:#00ffd5;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    flex-direction:column;
+    overflow:hidden;
+}
+
+.header{
+    font-size:3.5em;
+    margin-bottom:20px;
+    text-align:center;
+    letter-spacing:3px;
+    text-shadow:0 0 20px #00ffd5;
+}
+
+.matrix-effect{
+    position:absolute;
+    top:0;
+    left:0;
+    z-index:-1;
+    opacity:.25;
+}
+
+.hack-box{
+    background:rgba(10,10,10,.75);
+    border:1px solid rgba(0,255,213,.6);
+    backdrop-filter:blur(8px);
+    border-radius:10px;
+    padding:25px;
+    width:80%;
+    max-width:720px;
+    box-shadow:0 0 20px rgba(0,255,213,.4);
+    font-size:1.15em;
+    line-height:1.9;
+}
+
+.footer{
+    margin-top:30px;
+    font-size:1.3em;
+    text-align:center;
+}
+
+.typing{
+    border-right:2px solid #00ffd5;
+    animation:blink .7s infinite;
+}
+
+@keyframes blink{
+50%{border-color:transparent;}
+}
+
+</style>
+</head>
+
+<body>
+
+<canvas id="matrix" class="matrix-effect"></canvas>
+
+<div class="header" id="header"></div>
+<div class="hack-box" id="hack-data"></div>
+
+<div class="footer">
+<div id="contact-title"></div>
+<div id="contact1"></div>
+<div id="contact2"></div>
+<div id="contact3"></div>
+</div>
+
+<!-- MUSIC -->
+<audio id="bg-music" loop>
+<source src="https://a.top4top.io/m_3737ur91k1.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+
+/* ================= MATRIX ================= */
+
+const canvas=document.getElementById('matrix');
+const ctx=canvas.getContext('2d');
+
+canvas.width=innerWidth;
+canvas.height=innerHeight;
+
+const chars="01";
+const fontSize=14;
+const columns=canvas.width/fontSize;
+const drops=[];
+
+for(let i=0;i<columns;i++) drops[i]=1;
+
+function drawMatrix(){
+ctx.fillStyle='rgba(0,0,0,0.06)';
+ctx.fillRect(0,0,canvas.width,canvas.height);
+
+ctx.fillStyle='#00ffd5';
+ctx.font=fontSize+'px monospace';
+
+for(let i=0;i<drops.length;i++){
+const text=chars[Math.floor(Math.random()*chars.length)];
+ctx.fillText(text,i*fontSize,drops[i]*fontSize);
+
+if(drops[i]*fontSize>canvas.height && Math.random()>0.975)
+drops[i]=0;
+
+drops[i]++;
+}
+}
+setInterval(drawMatrix,33);
+
+
+/* ================= CONTENT ================= */
+
+const contentSequence=[
+{element:"header",text:"Hacked By Nightfall",duration:1000},
+{element:"hack-data",text:"Initializing system breach...",duration:500,append:true},
+{element:"hack-data",text:"\nBypassing firewalls...",duration:500,append:true},
+{element:"hack-data",text:"\nAccess granted: ROOT privileges",duration:500,append:true},
+{element:"hack-data",text:"\nData exfiltration in progress...",duration:500,append:true},
+{element:"hack-data",text:"\n\nTeam Members",duration:400,append:true},
+{element:"hack-data",text:"\nPsycho",duration:400,append:true},
+{element:"hack-data",text:"\n3jme",duration:400,append:true},
+{element:"hack-data",text:"\n7rbi",duration:400,append:true},
+{element:"hack-data",text:"\nPredominus",duration:400,append:true},
+{element:"hack-data",text:"\n\nSystem compromised successfully",duration:750,append:true},
+{element:"contact-title",text:"Contact Us:",duration:500},
+{element:"contact1",text:"Psycho",duration:500},
+{element:"contact2",text:"discord.gg/qpp",duration:500},
+{element:"contact3",text:"Psycho",duration:500}
+];
+
+
+/* ================= TYPE WRITER ================= */
+
+function typeWriter(element,text,duration,append=false,callback){
+
+const target=document.getElementById(element);
+target.classList.add('typing');
+
+let i=0;
+const speed=duration/text.length;
+
+function typing(){
+if(i<text.length){
+
+if(append)
+target.innerHTML+=text[i].replace(/\n/g,'<br>');
+else{
+if(i===0) target.innerHTML='';
+target.innerHTML+=text[i].replace(/\n/g,'<br>');
+}
+
+i++;
+setTimeout(typing,speed);
+}else{
+target.classList.remove('typing');
+if(callback) callback();
+}
+}
+
+typing();
+}
+
+
+/* ================= AUDIO FADE SYSTEM ================= */
+
+const music=document.getElementById("bg-music");
+
+/* تشغيل من البداية بصوت شبه صامت */
+function startMusic(){
+music.volume=0.02;
+
+music.play().catch(()=>{
+document.body.addEventListener("click",()=>{
+music.play();
+},{once:true});
+});
+}
+
+/* رفع الصوت تدريجياً حتى الكامل */
+function increaseVolumeGradually(){
+
+let vol=music.volume;
+
+const fade=setInterval(()=>{
+vol+=0.02;
+
+if(vol>=1){
+music.volume=1;
+clearInterval(fade);
+}else{
+music.volume=vol;
+}
+
+},200);
+}
+
+
+/* ================= START ================= */
+
+document.addEventListener('DOMContentLoaded',()=>{
+
+startMusic(); // يبدأ من البداية بصوت منخفض
+
+let delay=0;
+
+contentSequence.forEach(item=>{
+
+setTimeout(()=>{
+typeWriter(
+item.element,
+item.text,
+item.duration,
+item.append||false
+);
+},delay);
+
+delay+=item.duration;
+});
+
+/* بعد انتهاء الكتابة → الصوت كامل */
+setTimeout(increaseVolumeGradually, delay);
+
+});
+
+</script>
+
+</body>
+</html>
